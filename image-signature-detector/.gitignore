@@ -1,0 +1,29 @@
+# Dependency directories
+/node_modules/
+
+# Build directory
+/dist/
+/.nuxt/
+/.vscode/
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+npm-debug.log*
+
+# Editor directories and files
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+
+# IDE backup files
+*~
+*.swp
+
+# Log files
+*.log
+
+# Miscellaneous
+.DS_Store
+Thumbs.db
