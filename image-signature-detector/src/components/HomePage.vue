@@ -37,12 +37,29 @@
       </div>
     </div>
 
+    <div class="containerColumns">
+      <div class="column">
+        <div v-if="base64StringSent">
+          <h3>Immagine Trasferita come Base64</h3>
+          <textarea :value="base64StringSent" rows="10" cols="50"></textarea>
+        </div>
+      </div>
+
+      <div class="column">
+        <div v-if="base64StringReceived">
+          <h3>Immagine Ricevuta come Base64</h3>
+          <textarea :value="base64StringReceived" rows="10" cols="50"></textarea>
+        </div>
+      </div>
+    </div>
 
   </div>
 </template>
 
 
 <script>
+import axios from 'axios';
+
 export default {
   name: 'HomePage',
   props: {
@@ -52,7 +69,9 @@ export default {
     return {
       imageSent: null,
       imageReceived: null,
-      selectedFileName: null
+      base64StringSent: null,
+      base64StringReceived: null,
+      selectedFileName: null,
     };
   },
   methods: {
@@ -67,17 +86,30 @@ export default {
         reader.readAsDataURL(file);
       }
     },
-    transferImage() {
+    async transferImage() {
       
-      const api = "TODO";
+      const api = "https://b858-2a07-7e87-24b1-0-e984-3726-b636-6e70.ngrok-free.app/imageProcess";
       const postData = {
         "image": this.imageSent
       };
+
+      try {
+        const response = await axios.post(api, postData);
+        console.log('Response:', response.data);
+        this.imageReceived = "data:image/jpeg;base64," + response.data.imageProcessed;
+        this.base64StringReceived = this.imageReceived.split(",")[1];
+      } catch (error) {
+        console.error('Error:', error);
+      }
+
+      this.base64StringSent = this.imageSent.split(",")[1];
 
     },
     clear() {
       this.imageSent = null;
       this.imageReceived = null;
+      this.base64StringSent = null;
+      this.base64StringReceived = null;
       this.selectedFileName = null;
     }
   }
@@ -109,7 +141,31 @@ export default {
   background-color: rgb(218, 74, 74);
   color: white;
   border: none;
+  padding: 10px 20px;
+  margin: 1px
 }
 
+.custom-file-input {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  cursor: pointer;
+  padding: 10px 20px;
+  background-color: rgb(218, 74, 74);
+  color: #fff;
+  border-radius: 5px;
+}
+
+.custom-file-input input[type="file"] {
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.ricevuta-container {
+  position: relative;
+}
 
 </style>
