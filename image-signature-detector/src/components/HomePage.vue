@@ -29,6 +29,9 @@
 
       <div class="column">
         <div class="ricevuta-container column">
+          <div class="ricevuta" v-if="isLoading">
+            <div class="spinner"></div>
+          </div>
           <div class="ricevuta" v-if="imageReceived">
             <h3>Immagine Ricevuta</h3>
             <img :src="imageReceived" alt="Immagine Ricevuta">
@@ -72,6 +75,7 @@ export default {
       base64StringSent: null,
       base64StringReceived: null,
       selectedFileName: null,
+      isLoading: false
     };
   },
   methods: {
@@ -88,18 +92,21 @@ export default {
     },
     async transferImage() {
       
-      const api = "https://b858-2a07-7e87-24b1-0-e984-3726-b636-6e70.ngrok-free.app/imageProcess";
+      const api = "https://a40d-34-168-222-17.ngrok-free.app/imageProcess";
       const postData = {
         "image": this.imageSent
       };
 
+      this.isLoading = true;
       try {
         const response = await axios.post(api, postData);
         console.log('Response:', response.data);
+        this.isLoading = false;
         this.imageReceived = "data:image/jpeg;base64," + response.data.imageProcessed;
         this.base64StringReceived = this.imageReceived.split(",")[1];
       } catch (error) {
         console.error('Error:', error);
+        this.isLoading = false;
       }
 
       this.base64StringSent = this.imageSent.split(",")[1];
@@ -111,6 +118,7 @@ export default {
       this.base64StringSent = null;
       this.base64StringReceived = null;
       this.selectedFileName = null;
+      this.isLoading = false;
     }
   }
 }
@@ -168,4 +176,25 @@ export default {
   position: relative;
 }
 
+.spinner {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 5px solid #ccc;
+  border-top-color: #333;
+  animation: spin 1s linear infinite;
+  position: absolute;
+  top: 80px;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
 </style>
